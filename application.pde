@@ -63,10 +63,9 @@ background(100);
   textSize(30);
   text("°C", 100-15, 350); 
   text("%", 200-15, 350); 
-  text("°C", 600-15, 350); 
-  text("%", 700-15, 350); 
+  text("db", 600-15, 350); 
+  text("lum", 700-15, 350); 
 }
-
 
     
 interface Javascript {}
@@ -88,7 +87,6 @@ void keyPressed()
 				colorT=color_White;
 			} else {
 				colorT=color_Red;
-				valueT=random(50);
 			}
 		break;
 		case 119:
@@ -96,7 +94,6 @@ void keyPressed()
 				colorH=color_White;
 			} else {
 				colorH=color_Green;
-				valueH=random(100);
 			}
 		break;
 		case 101:
@@ -104,7 +101,6 @@ void keyPressed()
 				colorK=color_White;
 			} else {
 				colorK=color_Blue;
-				valueK=random(50);
 			}			
 		break;	
 		case 114:
@@ -112,7 +108,6 @@ void keyPressed()
 				colorL=color_White;
 			} else {
 				colorL=color_Purple;
-				valueL=random(100);
 			}			
 		break;	
 		default:
