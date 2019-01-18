@@ -4,15 +4,17 @@ var bigSize = 50;
 window.iconHeight = 500;
 var buttonHeight = 410;
 var count = 2;
-PImage l;
+PImage logo;
 PImage t;
-PImage h;
+PImage h,k,l;
 void setup() {
    size(800, 600);
    
-   l = loadImage("/GaiaTouch/img/download.png");
+   logo = loadImage("/GaiaTouch/img/download.png");
    t = loadImage("/GaiaTouch/img/temperature.png");
    h = loadImage("/GaiaTouch/img/humidity.png");
+   k = loadImage("/GaiaTouch/img/noise.png");
+   l = loadImage("/GaiaTouch/img/luminosity.png");
 
 }
 window.color_White=#FFFFFF;
@@ -26,10 +28,10 @@ window.colorH=color_White;
 window.colorK=color_White;
 window.colorL=color_White;
 
-window.valueT=random(50);
-window.valueH=random(50);
-window.valueK=random(50);
-window.valueL=random(50);
+window.valueT="--";
+window.valueH="--";
+window.valueK="--";
+window.valueL="--";
 
 void draw(){
 background(100);
@@ -49,9 +51,9 @@ background(100);
 
   image(t, 100-50,iconHeight-50, 100,100);
   image(h, 200-50,iconHeight-50, 100,100);
-  image(l, 400-50,iconHeight-25, 100,50);
-  image(t, 600-50,iconHeight-50, 100,100);
-  image(h, 700-50,iconHeight-50, 100,100);
+  image(logo, 400-50,iconHeight-25, 100,50);
+  image(k, 600-50,iconHeight-50, 100,100);
+  image(l, 700-50,iconHeight-50, 100,100);
   for (var i=0;i<count;i++){
 	println('');  
   }
@@ -109,9 +111,12 @@ void keyPressed()
 			} else {
 				colorL=color_Purple;
 			}			
-		break;	
+		break;
+// 		case 65535:
+// 			location.reload();
+// 		break;                
 		default:
-			console.log(int(key));
+			console.log(key);
 	}
 	
 }
