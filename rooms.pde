@@ -36,29 +36,29 @@ window.valueL="--";
 void draw(){
 background(100);
   stroke(0);
+    if (window.rooms){
+        textSize(30);
+        fill(colors[0]);
+        ellipse(columns[0] , roomsHeight1, smallSize, smallSize);
+        text(window.rooms[0].name, columns[0]+40-15, roomsHeight1+10 );
+        fill(colors[1]);
+        ellipse(columns[0], roomsHeight2, smallSize, smallSize);
+        text(window.rooms[1].name, columns[0]+40-15, roomsHeight2+10 );
 
-    textSize(30);
-    fill(colors[0]);
-    ellipse(columns[0] , roomsHeight1, smallSize, smallSize);
-    text("Αιθουσα 1", columns[0]+40-15, roomsHeight1+10 );
-    fill(colors[1]);
-    ellipse(columns[0], roomsHeight2, smallSize, smallSize);
-    text("Αιθουσα 2", columns[0]+40-15, roomsHeight2+10 );
+        fill(colors[2]);
+        ellipse(columns[1] , roomsHeight1, smallSize, smallSize);
+        text(window.rooms[2].name, columns[1]+40-15, roomsHeight1+10 );
+        fill(colors[3]);
+        ellipse(columns[1], roomsHeight2, smallSize, smallSize);
+        text(window.rooms[3].name, columns[1]+40-15, roomsHeight2+10 );
 
-    fill(colors[2]);
-    ellipse(columns[1] , roomsHeight1, smallSize, smallSize);
-    text("Αιθουσα 3", columns[1]+40-15, roomsHeight1+10 );
-    fill(colors[3]);
-    ellipse(columns[1], roomsHeight2, smallSize, smallSize);
-    text("Αιθουσα 4", columns[1]+40-15, roomsHeight2+10 );
-
-    fill(colors[4]);
-    ellipse(columns[2] , roomsHeight1, smallSize, smallSize);
-    text("Αιθουσα 3", columns[2]+40-15, roomsHeight1+10 );
-    fill(colors[5]);
-    ellipse(columns[2], roomsHeight2, smallSize, smallSize);
-    text("Αιθουσα 4", columns[2]+40-15, roomsHeight2+10 );
-
+        fill(colors[4]);
+        ellipse(columns[2] , roomsHeight1, smallSize, smallSize);
+        text(window.rooms[4].name, columns[2]+40-15, roomsHeight1+10 );
+        fill(colors[5]);
+        ellipse(columns[2], roomsHeight2, smallSize, smallSize);
+        text(window.rooms[5].name, columns[2]+40-15, roomsHeight2+10 );
+    }
     fill(color_White);
 
 
@@ -93,6 +93,10 @@ void clearColors(){
     for (var i=0;i<colors.length;i++){
         colors[i]=color_White;
     }
+    valueT="-";
+    valueH="-";
+    valueK="-";
+    valueL="-";
 }
 
 void keyPressed()
@@ -108,30 +112,39 @@ void keyPressed()
 		case 113:
             clearColors();
             colors[0]=color_Red;
+            disconnect();
+            connectWs(0);
 		break;
 		case 119:
             clearColors();
             colors[1]=color_Red;
+            disconnect();
+            connectWs(1);
 		break;
         case 101:
             clearColors();
             colors[2]=color_Red;
+            disconnect();
+            connectWs(2);
         break;
 		case 114:
             clearColors();
             colors[3]=color_Red;
+            disconnect();
+            connectWs(3);
 		break;
 		case 116:
             clearColors();
             colors[4]=color_Red;
+            disconnect();
+            connectWs(4);
 		break;
 		case 121:
             clearColors();
             colors[5]=color_Red;
+            disconnect();
+            connectWs(5);
 		break;
-// 		case 65535:
-// 			location.reload();
-// 		break;                
 		default:
 			console.log(key);
 	}

@@ -1,81 +1,114 @@
 <html>
 <head>
-<meta charset="UTF-8">
-<script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/GaiaTouch/js/processing.min.js"></script>
-  <script type="text/javascript">
-  // bind javascript to all Processing instances
-  window.pjs = null;
-  function bindJavascript() {
-    canvaslist = document.getElementsByTagName("canvas");
-    console.log(canvaslist);
-    for(c=0; c<canvaslist.length; c++) { 
-      console.log("bindJavascript");
-      window.pjs = Processing.getInstanceById(canvaslist[c]);
-      console.log(window.pjs);
-      try { pjs.bindJavascript(this);
-      console.log("done");}
-      catch(e) { 
-      console.log(e);
-      setTimeout(bindJavascript, 250); }
-    }
-  }
-  bindJavascript();
-  </script>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/GaiaTouch/js/processing.min.js"></script>
+    <script type="text/javascript">
+        // bind javascript to all Processing instances
+        window.pjs = null;
+
+        function bindJavascript() {
+            canvaslist = document.getElementsByTagName("canvas");
+            console.log(canvaslist);
+            for (c = 0; c < canvaslist.length; c++) {
+                console.log("bindJavascript");
+                window.pjs = Processing.getInstanceById(canvaslist[c]);
+                console.log(window.pjs);
+                try {
+                    pjs.bindJavascript(this);
+                    console.log("done");
+                } catch (e) {
+                    console.log(e);
+                    setTimeout(bindJavascript, 250);
+                }
+            }
+        }
+
+        bindJavascript();
+
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }
+    </script>
 </head>
 <body>
-<canvas id="processing-canvas" data-processing-sources="bypass.pde rooms.pde"> </canvas>
+<canvas id="processing-canvas" data-processing-sources="bypass.pde rooms.pde"></canvas>
 <script type="text/javascript">
-window.stompClient = null;
+    window.stompClient = null;
+    function connectWs(ind) {
+        connect(token,rooms[ind].path);
+    }
+    function connect(access_token, path) {
 
-function connect(access_token, path) {
+        var socket = new SockJS('https://ws.sparkworks.net/ws?access_token=' + access_token);
+        window.stompClient = Stomp.over(socket);
 
-    var socket = new SockJS('https://ws.sparkworks.net/ws?access_token=' + access_token);
-    window.stompClient = Stomp.over(socket);
+        window.stompClient.connect(
+            //headers
+            {},
+            //on successful connection
+            function (frame) {
+                stompClient.subscribe('/path/' + path, function (m) {
+                    showData(m.body);
+                });
+            },
+            //on failure (retry connection)
+            function () {
+            }
+        );
+    }
 
-    window.stompClient.connect(
-        //headers
-        {},
-        //on successful connection
-        function (frame) {
-            stompClient.subscribe('/path/' + path, function (m) {
-                showData(m.body);
-            });
-        },
-        //on failure (retry connection)
-        function () {
+    function disconnect() {
+        if (window.stompClient !== null && window.stompClient.connected == true) {
+            window.stompClient.disconnect();
         }
-    );
-}
+        $("#status").html('Disconnected');
+        $("#data > tbody").html("");
+    }
 
-function disconnect() {
-    if (window.stompClient !== null && window.stompClient.connected == true) {
-        window.stompClient.disconnect();
+    function showData(message) {
+        m = JSON.parse(message);
+        if (m.resourceUri.endsWith("Temperature")) {
+            window.valueT = m.value;
+        } else if (m.resourceUri.endsWith("Relative Humidity")) {
+            window.valueH = m.value;
+        } else if (m.resourceUri.endsWith("Noise")) {
+            window.valueK = m.value;
+        } else if (m.resourceUri.endsWith("Luminosity")) {
+            window.valueL = m.value;
+        }
     }
-    $("#status").html('Disconnected');
-    $("#data > tbody").html("");
-}
 
-function showData(message) {
-    m=JSON.parse(message);
-    if (m.resourceUri=="site-195/Temperature" || m.resourceUri.endsWith("Temperature")){
-        window.valueT=m.value;
-    }
-    else if (m.resourceUri=="site-195/Relative Humidity" || m.resourceUri.endsWith("Relative Humidity")){
-        window.valueH=m.value;
-    }
-    else if (m.resourceUri=="site-195/Noise" || m.resourceUri.endsWith("Noise")){
-        window.valueK=m.value;
-    }
-    else if (m.resourceUri=="site-195/Luminosity" || m.resourceUri.endsWith("Luminosity")){
-        window.valueL=m.value;
-    }
-}
-
-setTimeout(function(){
-connect("TOKEN","ROOT.GAIA.GROUPS.195");
-}, 1000);
+    setTimeout(function () {
+        window.path = findGetParameter("path");
+        window.token = findGetParameter("token");
+        parts = path.split(".");
+        window.roomId = parts[parts.length - 1];
+        $.ajaxSetup({
+            headers: {
+                'Authorization': "Bearer " + token
+            }
+        });
+        $.get("https://api.sparkworks.net/v2/group", function (data) {
+            g = data.filter(group => group.path == path);
+            window.group = g[0];
+            $.get("https://api.sparkworks.net/v2/group/" + group.uuid + "/subgroup/" + 10, function (data) {
+                window.rooms = data;
+            })
+        });
+        connect(token, path);
+    }, 1000);
 
 </script>
 </body>
