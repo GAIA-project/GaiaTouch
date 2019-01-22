@@ -115,7 +115,7 @@
                 window.rooms = data;
             })
         });
-        //connect(token, path);
+        connect(token, path);
 
         touchSocket = new WebSocket("ws://" + touch + ":12345/");
         touchSocket.onmessage = function (event) {
