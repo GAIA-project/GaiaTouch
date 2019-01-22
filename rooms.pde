@@ -18,6 +18,8 @@ void setup() {
    h = loadImage("/GaiaTouch/img/humidity.png");
    k = loadImage("/GaiaTouch/img/noise.png");
    l = loadImage("/GaiaTouch/img/luminosity.png");
+   c = loadImage("/GaiaTouch/img/current.png");
+   p = loadImage("/GaiaTouch/img/power.png");
 
 }
 window.color_White=#FFFFFF;
@@ -27,12 +29,14 @@ window.color_Blue=#0000FF;
 window.color_Purple=#FFFF00;
 
 window.colorSchool= color_White;
-window.colors= {color_White,color_White,color_White,color_White,color_White,color_White,color_White};
+window.colors= {color_Red,color_White,color_White,color_White,color_White,color_White,color_White};
 
 window.valueT="--";
 window.valueH="--";
 window.valueK="--";
 window.valueL="--";
+window.valueC="0";
+window.valueP="0";
 
 void draw(){
 background(100);
@@ -59,6 +63,8 @@ background(100);
   image(h, 450 ,180, 100,100);
   image(k, 450 ,280, 100,100);
   image(l, 450 ,380, 100,100);
+  image(p, 450 ,480, 100,100);
+  image(c, 450 ,580, 100,100);
   for (var i=0;i<count;i++){
 	println('');  
   }
@@ -67,11 +73,16 @@ background(100);
   text(int(valueH), 550, 280-25);
   text(int(valueK), 550, 380-25);
   text(int(valueL), 550, 480-25);
+  text(int(valueP), 550, 580-25);
+  text(float(valueC), 550, 680-25);
   textSize(30);
   text("°C", 650, 180-25);
   text("%", 650, 280-25);
   text("db", 650, 380-25);
   text("lum", 650, 480-25);
+  text("Wh", 650, 580-25);
+  text("A", 650, 680-25);
+
 
 }
 

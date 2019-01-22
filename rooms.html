@@ -86,14 +86,18 @@
 
     function showData(message) {
         m = JSON.parse(message);
-        if (m.resourceUri.endsWith("Temperature")) {
+        if (m.resourceUri.endsWith("Temperature") || m.resourceUri.endsWith("temp")) {
             window.valueT = m.value;
-        } else if (m.resourceUri.endsWith("Relative Humidity")) {
+        } else if (m.resourceUri.endsWith("Relative Humidity") || m.resourceUri.endsWith("humid")) {
             window.valueH = m.value;
-        } else if (m.resourceUri.endsWith("Noise")) {
+        } else if (m.resourceUri.endsWith("Noise") || m.resourceUri.endsWith("sound")) {
             window.valueK = m.value;
-        } else if (m.resourceUri.endsWith("Luminosity")) {
+        } else if (m.resourceUri.endsWith("Luminosity") || m.resourceUri.endsWith("light")) {
             window.valueL = m.value;
+        } else if (m.resourceUri.endsWith("Electrical Current") || m.resourceUri.endsWith("cur")) {
+            window.valueC = m.value / 1000;
+        } else if (m.resourceUri.endsWith("Power Consumption") || m.resourceUri.endsWith("curcon")) {
+            window.valueP = m.value / 1000;
         }
     }
 
@@ -121,10 +125,8 @@
         touchSocket.onmessage = function (event) {
             message = JSON.parse(event.data);
             console.log(event.data);
-            if (message["touch"]) {
-                touchedButton = message["touch"];
-                keysPressed.push(touchedButton)
-            }
+            touchedButton = message["touch"];
+            keysPressed.push(touchedButton)
         }
     }, 1000);
 
