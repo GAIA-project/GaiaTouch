@@ -45,10 +45,17 @@
 <body>
 <canvas id="processing-canvas" data-processing-sources="bypass.pde rooms.pde"></canvas>
 <script type="text/javascript">
+    window.keysPressed = [];
     window.stompClient = null;
+
     function connectWs(ind) {
-        connect(token,rooms[ind].path);
+        if (ind == 0) {
+            connect(token, group.path);
+        } else {
+            connect(token, rooms[ind].path);
+        }
     }
+
     function connect(access_token, path) {
 
         var socket = new SockJS('https://ws.sparkworks.net/ws?access_token=' + access_token);
@@ -93,6 +100,7 @@
     setTimeout(function () {
         window.path = findGetParameter("path");
         window.token = findGetParameter("token");
+        window.touch = findGetParameter("touch");
         parts = path.split(".");
         window.roomId = parts[parts.length - 1];
         $.ajaxSetup({
@@ -107,7 +115,17 @@
                 window.rooms = data;
             })
         });
-        connect(token, path);
+        //connect(token, path);
+
+        touchSocket = new WebSocket("ws://" + touch + ":12345/");
+        touchSocket.onmessage = function (event) {
+            message = JSON.parse(event.data);
+            console.log(event.data);
+            if (message["touch"]) {
+                touchedButton = message["touch"];
+                keysPressed.push(touchedButton)
+            }
+        }
     }, 1000);
 
 </script>

@@ -26,7 +26,8 @@ window.color_Green=#00FF00;
 window.color_Blue=#0000FF;
 window.color_Purple=#FFFF00;
 
-window.colors= {color_White,color_White,color_White,color_White,color_White,color_White};
+window.colorSchool= color_White;
+window.colors= {color_White,color_White,color_White,color_White,color_White,color_White,color_White};
 
 window.valueT="--";
 window.valueH="--";
@@ -35,52 +36,42 @@ window.valueL="--";
 
 void draw(){
 background(100);
+  keysPressedJs();
   stroke(0);
     if (window.rooms){
         textSize(30);
         fill(colors[0]);
-        ellipse(columns[0] , roomsHeight1, smallSize, smallSize);
-        text(window.rooms[0].name, columns[0]+40-15, roomsHeight1+10 );
-        fill(colors[1]);
-        ellipse(columns[0], roomsHeight2, smallSize, smallSize);
-        text(window.rooms[1].name, columns[0]+40-15, roomsHeight2+10 );
+        ellipse(columns[0] , 50, smallSize, smallSize);
+        text(window.group.name, columns[0]+40-15, 50+10);
+        for (var i=0;i<6;i++){
+                fill(colors[i+1]);
+                ellipse(columns[0] , 200+(i+1)*50, smallSize, smallSize);
+                text(window.rooms[i].name, columns[0]+40-15, 200+(i+1)*50+10);
+        }
 
-        fill(colors[2]);
-        ellipse(columns[1] , roomsHeight1, smallSize, smallSize);
-        text(window.rooms[2].name, columns[1]+40-15, roomsHeight1+10 );
-        fill(colors[3]);
-        ellipse(columns[1], roomsHeight2, smallSize, smallSize);
-        text(window.rooms[3].name, columns[1]+40-15, roomsHeight2+10 );
-
-        fill(colors[4]);
-        ellipse(columns[2] , roomsHeight1, smallSize, smallSize);
-        text(window.rooms[4].name, columns[2]+40-15, roomsHeight1+10 );
-        fill(colors[5]);
-        ellipse(columns[2], roomsHeight2, smallSize, smallSize);
-        text(window.rooms[5].name, columns[2]+40-15, roomsHeight2+10 );
     }
     fill(color_White);
 
 
+  image(logo, 50,100, 100,50);
 
-  image(t, 100-50,iconHeight-50, 100,100);
-  image(h, 200-50,iconHeight-50, 100,100);
-  image(logo, 400-50,iconHeight-25, 100,50);
-  image(k, 600-50,iconHeight-50, 100,100);
-  image(l, 700-50,iconHeight-50, 100,100);
+  image(t, 450 ,80, 100,100);
+  image(h, 450 ,180, 100,100);
+  image(k, 450 ,280, 100,100);
+  image(l, 450 ,380, 100,100);
   for (var i=0;i<count;i++){
 	println('');  
   }
   textSize(50);
-  text(int(valueT), 100-25, textHeight);
-  text(int(valueH), 200-25, textHeight);
-  text(int(valueK), 600-25, textHeight);
-  text(int(valueL), 700-25, textHeight);
+  text(int(valueT), 550, 180-25);
+  text(int(valueH), 550, 280-25);
+  text(int(valueK), 550, 380-25);
+  text(int(valueL), 550, 480-25);
   textSize(30);
-  text("°C", 100-15, textHeight + 50);
-  text("%", 200-15, textHeight + 50);
-  text("db", 600-15, textHeight + 50);
-  text("lum", 700-15, textHeight + 50);
+  text("°C", 650, 180-25);
+  text("%", 650, 280-25);
+  text("db", 650, 380-25);
+  text("lum", 650, 480-25);
 
 }
 
@@ -90,6 +81,7 @@ Javascript javascript=null;
 void bindJavascript(Javascript js) { javascript=js; }
 
 void clearColors(){
+    colorSchool = color_White;
     for (var i=0;i<colors.length;i++){
         colors[i]=color_White;
     }
@@ -99,54 +91,93 @@ void clearColors(){
     valueL="-";
 }
 
-void keyPressed()
-
+void keysPressedJs()
 {
+    if (keysPressed && keysPressed.length>0){
+        buttonPressed = keysPressed.pop()
+        doKeyPressed(buttonPressed);
+    }
+}
+
+void keyPressed()
+{
+    console.log(key);
 	switch(int(key)){
-		case 43:
-			iconHeight++;
-		break;
-		case 45:
-			iconHeight--;
-		break;
 		case 113:
-            clearColors();
-            colors[0]=color_Red;
-            disconnect();
-            connectWs(0);
-		break;
+		    doKeyPressed(0);
+		    break;
 		case 119:
-            clearColors();
-            colors[1]=color_Red;
-            disconnect();
-            connectWs(1);
-		break;
+            doKeyPressed(1);
+		    break;
         case 101:
-            clearColors();
-            colors[2]=color_Red;
-            disconnect();
-            connectWs(2);
-        break;
+            doKeyPressed(2);
+            break;
 		case 114:
-            clearColors();
-            colors[3]=color_Red;
-            disconnect();
-            connectWs(3);
-		break;
+            doKeyPressed(3);
+		    break;
 		case 116:
-            clearColors();
-            colors[4]=color_Red;
-            disconnect();
-            connectWs(4);
-		break;
+            doKeyPressed(4);
+		    break;
 		case 121:
-            clearColors();
-            colors[5]=color_Red;
-            disconnect();
-            connectWs(5);
-		break;
+            doKeyPressed(5);
+		    break;
+        case 117:
+            doKeyPressed(6);
+		    break;
 		default:
 			console.log(key);
 	}
 	
+}
+
+
+void doKeyPressed(key)
+{
+	switch(key){
+		case 0:
+            clearColors();
+            colors[0]=color_Red;
+            disconnect();
+            connectWs(0);
+		    break;
+		case 1:
+            clearColors();
+            colors[1]=color_Red;
+            disconnect();
+            connectWs(1);
+		    break;
+        case 2:
+            clearColors();
+            colors[2]=color_Red;
+            disconnect();
+            connectWs(2);
+            break;
+		case 3:
+            clearColors();
+            colors[3]=color_Red;
+            disconnect();
+            connectWs(3);
+		    break;
+		case 4:
+            clearColors();
+            colors[4]=color_Red;
+            disconnect();
+            connectWs(4);
+		    break;
+		case 5:
+            clearColors();
+            colors[5]=color_Red;
+            disconnect();
+            connectWs(5);
+            break;
+		case 6:
+            clearColors();
+            colors[6]=color_Red;
+            disconnect();
+            connectWs(6);
+		    break;
+		default:
+			console.log(key);
+	}
+
 }
