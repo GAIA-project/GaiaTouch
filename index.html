@@ -1,82 +1,105 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/GaiaTouch/js/processing.min.js"></script>
-  <script type="text/javascript">
-  // bind javascript to all Processing instances
-  window.pjs = null;
-  function bindJavascript() {
-    canvaslist = document.getElementsByTagName("canvas");
-    console.log(canvaslist);
-    for(c=0; c<canvaslist.length; c++) { 
-      console.log("bindJavascript");
-      window.pjs = Processing.getInstanceById(canvaslist[c]);
-      console.log(window.pjs);
-      try { pjs.bindJavascript(this);
-      console.log("done");}
-      catch(e) { 
-      console.log(e);
-      setTimeout(bindJavascript, 250); }
-    }
-  }
-  bindJavascript();
-  </script>
+    <title>GaiaTouch</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/el.js"></script>
 </head>
 <body>
-<canvas id="processing-canvas" data-processing-sources="bypass.pde application.pde"> </canvas>
+<header class="navbar navbar-static-top bs-docs-nav" id="top">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header">
+            <button aria-controls="bs-navbar" aria-expanded="false" class="collapsed navbar-toggle"
+                    data-target="#bs-navbar" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+            </button>
+            <a href="/GaiaTouch/" class="navbar-brand">GAIA</a></div>
+
+        <nav class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="nav navbar-nav">
+                <li><a href="/GaiaTouch/">Home</a></li>
+                <li><a href="http://gaia-project.eu">Website</a></li>
+                <li><a href="http://gaia-challenge.com">Challenge</a></li>
+                <li><a href="http://bms.gaia-project.eu">BMS</a></li>
+            </ul>
+        </nav>
+    </nav>
+</header>
+<div class="container">
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                       aria-expanded="true" aria-controls="collapseOne">
+                        Athens Science Festival Demo
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <form class="form-horizontal col-md-12" action="./asfv2.html">
+                        <div class="form-group">
+                            <label for="token">Token:</label>
+                            <input type="text" class="form-control token" name="token">
+                        </div>
+                        <div class="form-group">
+                            <label for="path">Touch IP:</label>
+                            <input type="text" class="form-control" name="touch">
+                        </div>
+                        <button type="submit" class="btn btn-default">Start Demo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Rooms Demo
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                    <form class="form-horizontal col-md-12" action="./rooms.html">
+                        <div class="form-group">
+                            <label for="token">Token:</label>
+                            <input type="text" class="form-control token" id="token" name="token">
+                        </div>
+                        <div class="form-group">
+                            <label for="path">Path:</label>
+                            <input type="text" class="form-control" id="path" name="path">
+                        </div>
+                        <div class="form-group">
+                            <label for="path">Touch IP:</label>
+                            <input type="text" class="form-control" id="touch" name="touch">
+                        </div>
+                        <button type="submit" class="btn btn-default">Start Rooms</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
-window.stompClient = null;
-
-function connect(access_token, path) {
-
-    var socket = new SockJS('https://ws.sparkworks.net/ws?access_token=' + access_token);
-    window.stompClient = Stomp.over(socket);
-
-    window.stompClient.connect(
-        //headers
-        {},
-        //on successful connection
-        function (frame) {
-            stompClient.subscribe('/path/' + path, function (m) {
-                showData(m.body);
-            });
-        },
-        //on failure (retry connection)
-        function () {
+    $('document').ready(function () {
+        if (window.location.href.indexOf("access_token") > 0) {
+            token = window.location.href.split("access_token=")[1].split("&")[0];
+            $(".token").val(token);
+        } else {
+            window.location = "https://sso.sparkworks.net/aa/oauth/authorize?response_type=token&client_id=GaiaTouch&redirect_uri=http%3A%2F%2Fgold.cti.gr%3A81%2FGaiaTouch%2Findex.html";
         }
-    );
-}
-
-function disconnect() {
-    if (window.stompClient !== null && window.stompClient.connected == true) {
-        window.stompClient.disconnect();
-    }
-    $("#status").html('Disconnected');
-    $("#data > tbody").html("");
-}
-
-function showData(message) {
-    m=JSON.parse(message);
-    if (m.resourceUri=="site-195/Temperature" || m.resourceUri.endsWith("Temperature")){
-        window.valueT=m.value;
-    }
-    else if (m.resourceUri=="site-195/Relative Humidity" || m.resourceUri.endsWith("Relative Humidity")){
-        window.valueH=m.value;
-    }
-    else if (m.resourceUri=="site-195/Noise" || m.resourceUri.endsWith("Noise")){
-        window.valueK=m.value;
-    }
-    else if (m.resourceUri=="site-195/Luminosity" || m.resourceUri.endsWith("Luminosity")){
-        window.valueL=m.value;
-    }
-}
-
-setTimeout(function(){
-connect("TOKEN","ROOT.GAIA.GROUPS.195");
-}, 1000);
-
+    });
 </script>
 </body>
 </html>
