@@ -145,50 +145,50 @@ void keyPressed()
 void doKeyPressed(key)
 {
 	switch(key){
-		case 0:
+        case 0:
             clearColors();
             colors[0]=color_Red;
             disconnect();
             connectWs(0);
-		    break;
-		case 1:
+            break;
+        case 1:
             clearColors();
             colors[1]=color_Red;
             disconnect();
             connectWs(1);
-		    break;
+            break;
         case 2:
             clearColors();
             colors[2]=color_Red;
             disconnect();
             connectWs(2);
             break;
-		case 3:
+        case 3:
             clearColors();
             colors[3]=color_Red;
             disconnect();
             connectWs(3);
-		    break;
-		case 4:
+            break;
+        case 4:
             clearColors();
             colors[4]=color_Red;
             disconnect();
             connectWs(4);
-		    break;
-		case 5:
+            break;
+        case 5:
             clearColors();
             colors[5]=color_Red;
             disconnect();
             connectWs(5);
             break;
-		case 6:
+        case 6:
             clearColors();
             colors[6]=color_Red;
             disconnect();
             connectWs(6);
-		    break;
-		default:
-			console.log(key);
+            break;
+        default:
+            console.log(key);
 	}
 
 }
