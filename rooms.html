@@ -47,8 +47,9 @@
 <script type="text/javascript">
     window.keysPressed = [];
     window.stompClient = null;
-
+    window.ind = 0;
     function connectWs(ind) {
+        window.ind=ind;
         if (ind == 0) {
             connect(token, group.path);
         } else {
@@ -86,18 +87,40 @@
 
     function showData(message) {
         m = JSON.parse(message);
-        if (m.resourceUri.endsWith("Temperature") || m.resourceUri.endsWith("temp")) {
-            window.valueT = m.value;
-        } else if (m.resourceUri.endsWith("Relative Humidity") || m.resourceUri.endsWith("humid")) {
-            window.valueH = m.value;
-        } else if (m.resourceUri.endsWith("Noise") || m.resourceUri.endsWith("sound")) {
-            window.valueK = m.value;
-        } else if (m.resourceUri.endsWith("Luminosity") || m.resourceUri.endsWith("light")) {
-            window.valueL = m.value;
-        } else if (m.resourceUri.endsWith("Electrical Current") || m.resourceUri.endsWith("cur")) {
-            window.valueC = m.value / 1000;
-        } else if (m.resourceUri.endsWith("Power Consumption") || m.resourceUri.endsWith("curcon")) {
-            window.valueP = m.value / 1000;
+        if ( ind === 0 ){
+            parts=group.path.split('.');
+            suffix_site_school=parts[parts.length-1]+"/";
+            if (m.resourceUri.endsWith("Temperature")) {
+                window.valueT = m.value;
+            } else if (m.resourceUri.endsWith("Relative Humidity")) {
+                window.valueH = m.value;
+            } else if (m.resourceUri.endsWith("Noise")) {
+                window.valueK = m.value;
+            } else if (m.resourceUri.endsWith("Luminosity")) {
+                window.valueL = m.value;
+            } else if (m.resourceUri.endsWith("Electrical Current") && m.resourceUri.indexOf(suffix_site_school)>-1) {
+                window.valueC = m.value / 1000;
+                console.log('Show POWER 0 for '+ m.resourceUri);
+                window.valueP = (m.value*240) / 1000;
+            } else if (m.resourceUri.endsWith("Power Consumption") && m.resourceUri.indexOf(suffix_site_school)>-1) {
+
+            }
+        } else {
+            if (m.resourceUri.endsWith("lm35") || m.resourceUri.endsWith("temp")) {
+                window.valueT = m.value;
+            } else if (m.resourceUri.endsWith("hih4030") || m.resourceUri.endsWith("humid")) {
+                window.valueH = m.value;
+            } else if (m.resourceUri.endsWith("sound") || m.resourceUri.endsWith("cg306")) {
+                window.valueK = m.value;
+            } else if (m.resourceUri.endsWith("cds") || m.resourceUri.endsWith("light")) {
+                window.valueL = m.value;
+            } else if (m.resourceUri.endsWith("Electrical Current") || m.resourceUri.endsWith("cur")) {
+                window.valueC = m.value / 1000;
+                console.log('Show POWER !0 for '+ m.resourceUri);    
+                window.valueP = (m.value*240) / 1000;
+            } else if (m.resourceUri.endsWith("Power Consumption") || m.resourceUri.endsWith("curcon")) {
+                
+            }
         }
     }
 
