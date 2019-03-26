@@ -1,0 +1,863 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/el.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script type="text/javascript">
+        window.schools = [{power: 350, students: 100, area: 200}];
+    </script>
+    <style>
+        .panel {
+            border-radius: 0;
+            margin-bottom: 0;
+        }
+
+        .panel-heading {
+            border-radius: 0;
+            margin-bottom: 0;
+        }
+        .panel-success > .panel-heading{
+            color: white;
+            background: #9cc900;
+        }
+    </style>
+</head>
+<body onkeydown="keyPressedEvent(event)">
+
+<div class="container">
+    <br/>
+    <div class="tab-content clearfix">
+        <div class="tab-pane fade in  active" id="day" role="tabpanel" aria-labelledby="day-tab" style="">
+            <h3 class="schoolName1"></h3>
+            <div class="col-md-12">
+                <canvas id="day_chart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        <div class="tab-pane fade in" id="week" role="tabpanel" aria-labelledby="week-tab" style="">
+            <h3 class="schoolName1"></h3>
+            <div class="col-md-12">
+                <canvas id="week_chart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        <div class="tab-pane fade in" id="ranking" role="tabpanel" aria-labelledby="ranking-tab" style="">
+            <h3 class="schoolName1"></h3>
+            <div class="col-md-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Στοιχεια Σχολείου</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <span style="font-size: 4em" class="schoolStudents1">223</span>
+                        <span style="font-size: 2em">μαθητές</span>
+                        <br/>
+                        <span style="font-size: 4em" class="schoolArea1">120</span>
+                        <span style="font-size: 2em">τ.μ.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
+                        <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
+                        <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
+                        <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <span style="font-size: 4em" class="cons1"></span>
+                        <span style="font-size: 2em" class="uomField">kWh</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &le; 20 &#8451;</h3>
+                        <h3 class="panel-title compare1">Ένταση Θορύβου ανά Μαθητή</h3>
+                        <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &le; 40 %RH</h3>
+                        <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά Μαθητή</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <span style="font-size: 4em" class="consPerStudent1"></span>
+                        <span style="font-size: 2em" class="compare0">ημέρες</span>
+                        <span style="font-size: 2em" class="compare1">db</span>
+                        <span style="font-size: 2em" class="compare2">ημέρες</span>
+                        <span style="font-size: 2em" class="compare3">kWh</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-offset-3 col-md-9">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &ge; 26 &#8451;</h3>
+                        <h3 class="panel-title compare1">Ημέρες με ένταση &ge; 40db</h3>
+                        <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &ge; 56 %RH</h3>
+                        <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά τ.μ.</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <span style="font-size: 4em" class="consPerArea1"></span>
+                        <span style="font-size: 2em" class="compare0">ημέρες</span>
+                        <span style="font-size: 2em" class="compare1">ημέρες</span>
+                        <span style="font-size: 2em" class="compare2">ημέρες</span>
+                        <span style="font-size: 2em" class="compare3">kWh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade in" id="compare" role="tabpanel" aria-labelledby="compare-tab" style="">
+            <div class="col-md-6">
+                <h3 class="schoolName1"></h3>
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Στοιχεια Σχολείου 1</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="schoolStudents1">223</span>
+                            <span style="font-size: 2em">μαθητές</span>
+                            <br/>
+                            <span style="font-size: 4em" class="schoolArea1">120</span>
+                            <span style="font-size: 2em">τ.μ.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="cons1"></span>
+                            <span style="font-size: 2em" class="uomField">kWh</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &le; 20 &#8451;</h3>
+                            <h3 class="panel-title compare1">Ένταση Θορύβου ανά Μαθητή</h3>
+                            <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &le; 40 %RH</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά Μαθητή</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="consPerStudent1"></span>
+                            <span style="font-size: 2em" class="compare0">ημέρες</span>
+                            <span style="font-size: 2em" class="compare1">db</span>
+                            <span style="font-size: 2em" class="compare2">ημέρες</span>
+                            <span style="font-size: 2em" class="compare3">kWh</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &ge; 26 &#8451;</h3>
+                            <h3 class="panel-title compare1">Ημέρες με ένταση &ge; 40db</h3>
+                            <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &ge; 56 %RH</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά τ.μ.</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="consPerArea1"></span>
+                            <span style="font-size: 2em" class="compare0">ημέρες</span>
+                            <span style="font-size: 2em" class="compare1">ημέρες</span>
+                            <span style="font-size: 2em" class="compare2">ημέρες</span>
+                            <span style="font-size: 2em" class="compare3">kWh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="schoolName2"></h3>
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Στοιχεια Σχολείου 2</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="schoolStudents2">223</span>
+                            <span style="font-size: 2em">μαθητές</span>
+                            <br/>
+                            <span style="font-size: 4em" class="schoolArea2">120</span>
+                            <span style="font-size: 2em">τ.μ.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="cons2"></span>
+                            <span style="font-size: 2em" class="compare0">&#8451;</span>
+                            <span style="font-size: 2em" class="compare1">db</span>
+                            <span style="font-size: 2em" class="compare2">%RH</span>
+                            <span style="font-size: 2em" class="compare3">kWh</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &le; 20 &#8451;</h3>
+                            <h3 class="panel-title compare1">Ένταση Θορύβου ανά Μαθητή</h3>
+                            <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &le; 40 %RH</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά Μαθητή</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="consPerStudent2"></span>
+                            <span style="font-size: 2em" class="compare0">ημέρες</span>
+                            <span style="font-size: 2em" class="compare1">db</span>
+                            <span style="font-size: 2em" class="compare2">ημέρες</span>
+                            <span style="font-size: 2em" class="compare3">kWh</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title compare0">Ημέρες με θερμοκρασία &ge; 26 &#8451;</h3>
+                            <h3 class="panel-title compare1">Ημέρες με ένταση &ge; 40db</h3>
+                            <h3 class="panel-title compare2">Ημέρες με Σχετική Υγρασία &ge; 56 %RH</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας ανά τ.μ.</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <span style="font-size: 4em" class="consPerArea2"></span>
+                            <span style="font-size: 2em" class="compare0">ημέρες</span>
+                            <span style="font-size: 2em" class="compare1">ημέρες</span>
+                            <span style="font-size: 2em" class="compare2">ημέρες</span>
+                            <span style="font-size: 2em" class="compare3">kWh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Graphs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script>
+    keysBind = ['q', 'w', 'e', 'r', '1', '2', '3', '4', 's', 'a', 'z'];
+
+    schools = [
+        {id: 155865, name: '46ο Δημοτικό Σχολείο Πατρών', students: 100, area: 200, path: 'ROOT.GAIA.GROUPS.155865'},
+        {id: 27827, name: '8ο Γυμνάσιο Πατρών', students: 101, area: 201, path: 'ROOT.GAIA.GROUPS.27827'},
+        {id: 19640, name: "Γυμνάσιο Πενταβρύσου Καστοριάς", students: 100, area: 200, path: 'ROOT.GAIA.GROUPS.19640'},
+        // {
+        //     id: 155877,
+        //     name: "2ο Δημοτικό Σχολείο Παραλίας Πατρών",
+        //     students: 100,
+        //     area: 200,
+        //     path: 'ROOT.GAIA.GROUPS.155877'
+        // },
+        // {
+        //     id: 506265,
+        //     name: "1o Δημοτικό Σχολείο Ψυχικού Αττικής",
+        //     students: 100,
+        //     area: 200,
+        //     path: 'ROOT.GAIA.GROUPS.506265'
+        // },
+        {id: 157185, name: "Ελληνογερμανική Αγωγή", students: 100, area: 200, path: 'ROOT.GAIA.GROUPS.157185'},
+        {
+            id: 155849,
+            name: "6ο Δημοτικό Σχολείο Καισαριανής",
+            students: 100,
+            area: 200,
+            path: 'ROOT.GAIA.GROUPS.155849'
+        },
+
+        // {id: 156886, name: '1ο Γυμνάσιο Ν. Φιλαδέλφειας', students: 102, area: 202, path: 'ROOT.GAIA.GROUPS.144242'},
+        // {
+        //     id: 3206,
+        //     name: 'Πειραματικό Δημοτικό Σχολείο Πανεπιστημίου Πατρών',
+        //     students: 103,
+        //     area: 203,
+        //     path: 'ROOT.GAIA.GROUPS.3206'
+        // },
+        // {
+        //     id: 195,
+        //     name: 'Πειραματικό Λύκειο Πανεπιστημίου Πατρών',
+        //     students: 104,
+        //     area: 204,
+        //     path: 'ROOT.GAIA.GROUPS.195'
+        // },
+        // {
+        //     id: 204,
+        //     name: 'Πειραματικό Γυμνάσιο Πανεπιστημίου Πατρών',
+        //     students: 105,
+        //     area: 205,
+        //     path: 'ROOT.GAIA.GROUPS.204'
+        // },
+        {id: 141611, name: 'Πειραματικό Γυμνάσιο Πατρών', students: 106, area: 206, path: 'ROOT.GAIA.GROUPS.141611'}
+    ];
+    schoolIndex1 = 0;
+    schoolIndex2 = 1;
+    selected_type = 0;
+
+
+    function findGetParameter(parameterName) {
+        var result = null,
+            tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }
+
+    setTimeout(function () {
+        window.touch = findGetParameter("touch");
+        window.token = findGetParameter("token");
+        window.path = findGetParameter("path");
+
+        $.ajaxSetup({
+            headers: {
+                'Authorization': "Bearer " + token
+            }
+        });
+
+        $.get("https://api.sparkworks.net/v2/group", function (data) {
+            data.forEach(function (e) {
+                schools.forEach(function (school) {
+                        if (school.path === e.path) {
+                            school.group = e;
+                            $.get("https://api.sparkworks.net/v2/group/" + e.uuid + "/resource", function (resources) {
+                                console.log(school);
+                                school.resources = resources;
+                                for (i = 0; i < resources.length; i++) {
+                                    if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Consumption")) {
+                                        school.consumption = resources[i];
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Temperature")) {
+                                        school.temperature = resources[i];
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Humidity")) {
+                                        school.humidity = resources[i];
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Noise")) {
+                                        school.noise = resources[i];
+                                    }
+                                }
+                            });
+                            $.get("https://buildings.gaia-project.eu/gaia-building-knowledge-base/sites/" + school.id + "/siteInfo", function (response) {
+                                school.students = response.maximumNumberOfPeople;
+                                school.area = response.squareMeters;
+                                school.volume = response.cubicMeters;
+                                console.log(response);
+                            });
+                        }
+                    }
+                );
+            });
+        });
+
+        window.lastKey = 9;
+        if (touch != null && touch !== "") {
+            touchSocket = new WebSocket("ws://" + touch + ":12345/");
+            touchSocket.onmessage = function (event) {
+                message = JSON.parse(event.data);
+                if (message.touch >= 0 && message.touch <= 9) {
+                    keyPressedSimulated(keysBind[message.touch]);
+                } else {
+                    switch (lastKey) {
+                        case 9:
+                            switch (message.touch) {
+                                case 10:
+                                    //next
+                                    keyPressedSimulated('a');
+                                    break;
+                                case 11:
+                                    //prev
+                                    keyPressedSimulated('z');
+                                    break;
+                            }
+                            break;
+                        case 10:
+                            switch (message.touch) {
+                                case 11:
+                                    //next
+                                    keyPressedSimulated('a');
+                                    break;
+                                case 9:
+                                    //prev
+                                    keyPressedSimulated('z');
+                                    break;
+                            }
+                            break;
+                        case 11:
+                            switch (message.touch) {
+                                case 9:
+                                    //next
+                                    keyPressedSimulated('a');
+                                    break;
+                                case 10:
+                                    //prev
+                                    keyPressedSimulated('z');
+                                    break;
+                            }
+                            break;
+                    }
+                    console.log(message.touch);
+                    window.lastKey = message.touch;
+                }
+            };
+        }
+
+        setTimeout(function () {
+            updateGraphDay();
+            updateGraphWeek();
+            updateSchool1();
+            updateSchool2();
+        }, 2000);
+
+    }, 1000);
+
+    function keyPressedEvent(event) {
+        keyPressedSimulated(event.key);
+    }
+
+    function keyPressedSimulated(key) {
+        switch (key) {
+            case 'q':
+            case 'Q':
+            case ';':
+                $(".tab-pane").hide();
+                $("#day").show();
+                break;
+            case 'w':
+            case 'W':
+            case 'ς':
+                $(".tab-pane").hide();
+                $("#week").show();
+                break;
+            case 'e':
+            case 'E':
+            case 'Ε':
+            case 'ε':
+                $(".tab-pane").hide();
+                $("#ranking").show();
+                break;
+            case 'r':
+            case 'R':
+            case 'Ρ':
+            case 'ρ':
+                $(".tab-pane").hide();
+                $("#compare").show();
+                updateCompareStats(1);
+                updateCompareStats(2);
+                break;
+            case 'a':
+            case 'A':
+            case 'Α':
+            case 'α':
+                schoolIndex1++;
+                if (schoolIndex1 >= schools.length) {
+                    schoolIndex1 = 0;
+                }
+                updateSchool1();
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+            case 'z':
+            case 'Z':
+            case 'Ζ':
+            case 'ζ':
+                schoolIndex1--;
+                if (schoolIndex1 === 0) {
+                    schoolIndex1 = schools.length - 1;
+                }
+                updateSchool1();
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+            case 's':
+            case 'S':
+            case 'Σ':
+            case 'σ':
+                schoolIndex2++;
+                if (schoolIndex2 >= schools.length) {
+                    schoolIndex2 = 0;
+                }
+                updateSchool2();
+                break;
+            case 'x':
+            case 'X':
+            case 'Χ':
+            case 'χ':
+                schoolIndex2--;
+                if (schoolIndex2 === 0) {
+                    schoolIndex2 = schools.length - 1;
+                }
+                updateSchool2();
+                break;
+            case '1':
+                selected_type = 0;
+                updateCompareStats(1);
+                updateCompareStats(2);
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+            case '2':
+                selected_type = 1;
+                updateCompareStats(1);
+                updateCompareStats(2);
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+            case '3':
+                selected_type = 2;
+                updateCompareStats(1);
+                updateCompareStats(2);
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+            case '4':
+                selected_type = 3;
+                updateCompareStats(1);
+                updateCompareStats(2);
+                updateGraphDay();
+                updateGraphWeek();
+                break;
+        }
+    }
+
+    function updateGraphDay() {
+        console.log(schools[schoolIndex1]);
+        if (schools[schoolIndex1].resources === undefined) return;
+        resource = schools[schoolIndex1].consumption;
+        switch (selected_type) {
+            case 0:
+                resource = schools[schoolIndex1].temperature;
+                target = null;
+                break;
+            case 1:
+                resource = schools[schoolIndex1].noise;
+                target = null;
+                break;
+            case 2:
+                resource = schools[schoolIndex1].humidity;
+                target = null;
+                break;
+            case 3:
+                resource = schools[schoolIndex1].consumption;
+                target = "kWh";
+                break;
+        }
+
+        queries = [
+            {
+                "from": new Date().getTime() - 24 * 60 * 60 * 1000,
+                "granularity": "hour",
+                "resourceUuid": resource.uuid,
+                "resultLimit": 0,
+                "targetUom": target,
+                "to": new Date().getTime()
+            }
+        ];
+
+        $.ajax({
+            method: "POST",
+            url: "https://api.sparkworks.net/v2/resource/query/timerange",
+            data: JSON.stringify({
+                "queries": queries
+            }),
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+                window.response = response;
+                var day_ctx = document.getElementById("day_chart");
+                day_ctx.innerHTML = "";
+                plot(day_ctx, response, 'hour');
+
+            }
+        });
+    }
+
+    function updateGraphWeek() {
+        console.log(schools[schoolIndex1]);
+        if (schools[schoolIndex1].resources === undefined) return;
+        resource = schools[schoolIndex1].consumption;
+        switch (selected_type) {
+            case 0:
+                resource = schools[schoolIndex1].temperature;
+                target = null;
+                break;
+            case 1:
+                resource = schools[schoolIndex1].noise;
+                target = null;
+                break;
+            case 2:
+                resource = schools[schoolIndex1].humidity;
+                target = null;
+                break;
+            case 3:
+                resource = schools[schoolIndex1].consumption;
+                target = "kWh";
+                break;
+        }
+
+
+        queries = [
+            {
+                "from": new Date().getTime() - 7 * 24 * 60 * 60 * 1000,
+                "granularity": "day",
+                "resourceUuid": resource.uuid,
+                "resultLimit": 0,
+                "targetUom": target,
+                "to": new Date().getTime()
+            }
+        ];
+
+        $.ajax({
+            method: "POST",
+            url: "https://api.sparkworks.net/v2/resource/query/timerange",
+            data: JSON.stringify({
+                "queries": queries
+            }),
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+                window.response = response;
+                var day_ctx = document.getElementById("week_chart");
+                day_ctx.innerHTML = "";
+                plot(day_ctx, response, 'day');
+
+            }
+        });
+    }
+
+    function updateSchool1() {
+        $(".schoolName1").text(schools[schoolIndex1].name);
+        $(".schoolStudents1").text(schools[schoolIndex1].students);
+        $(".schoolArea1").text(schools[schoolIndex1].area);
+        $(".schoolVolume1").text(schools[schoolIndex1].volume);
+        updateGraphDay();
+        updateGraphWeek();
+        updateCompareStats(1);
+    }
+
+    function updateSchool2() {
+        $(".schoolName2").text(schools[schoolIndex2].name);
+        $(".schoolStudents2").text(schools[schoolIndex2].students);
+        $(".schoolArea2").text(schools[schoolIndex2].area);
+        $(".schoolVolume2").text(schools[schoolIndex2].volume);
+        updateCompareStats(2);
+    }
+
+    function plot(location, response, type) {
+        max = null;
+        switch (selected_type) {
+            case 0:
+                yTitle = "Temperature (C)";
+                max = 30;
+                break;
+            case 1:
+                yTitle = "Noise (db)";
+                max = 100;
+                break;
+            case 2:
+                yTitle = "Relative Humidity (%RH)";
+                max = 100;
+                break;
+            case 3:
+                yTitle = "Power Consumption (kWh)";
+                // max = (type === 'hour') ? 14 : 120;
+                break;
+        }
+
+        jkey = null;
+        for (var key in response.results) {
+            jkey = key
+        }
+        gData = [];
+        maxVal = 0;
+        for (var data in response.results[jkey].data) {
+            gData.push({
+                x: new Date(response.results[jkey].data[data].timestamp),
+                y: response.results[jkey].data[data].reading
+            });
+            if (maxVal < response.results[jkey].data[data].reading) {
+                maxVal = response.results[jkey].data[data].reading;
+            }
+        }
+        // gData.push({x: new Date(), y: null});
+        new Chart(location, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    label: schools[schoolIndex1].name,
+                    data: gData,
+                    lineTension: 0,
+                    backgroundColor: '#9cc900',
+                    borderColor: '#9cc900',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#007bff'
+                }]
+            },
+            options: {
+                showTooltips: false,
+                hover: {mode: null},
+                tooltips: {
+                    enabled: false
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: (max === null) ? ((parseInt((maxVal / 5)) + 1) * 5) : max,
+                        },
+                        scaleLabel: {
+                            display: true, fontSize: 20, labelString: yTitle
+                        }
+                    }],
+                    xAxes: [{
+                        offset: true,
+                        type: 'time',
+                        time: {
+                            unit: type
+                        },
+                        scaleLabel: {
+                            display: true, fontSize: 20, labelString: 'Time'
+                        }
+                    }]
+                },
+                legend: {
+                    display: false,
+                }
+            }
+        });
+    }
+
+    function updateCompareStats(ind) {
+        var schoolIndex = schoolIndex1;
+        if (ind === 2) {
+            schoolIndex = schoolIndex2;
+        }
+        resource1 = schools[schoolIndex].consumption;
+        targetUom = null;
+        resUom = null;
+        limit1 = null;
+        limit2 = null;
+        switch (selected_type) {
+            case 0:
+                resource1 = schools[schoolIndex].temperature;
+                resUom = "&#8451;";
+                $(".compare0").show();
+                $(".compare1").hide();
+                $(".compare2").hide();
+                $(".compare3").hide();
+                limit1 = 20;
+                limit2 = 26;
+                break;
+            case 1:
+                resource1 = schools[schoolIndex].noise;
+                resUom = "db";
+                $(".compare0").hide();
+                $(".compare1").show();
+                $(".compare2").hide();
+                $(".compare3").hide();
+                limit1 = 40;
+                break;
+            case 2:
+                resource1 = schools[schoolIndex].humidity;
+                resUom = "%RH";
+                $(".compare0").hide();
+                $(".compare1").hide();
+                $(".compare2").show();
+                $(".compare3").hide();
+                limit1 = 40;
+                limit2 = 56;
+                break;
+            case 3:
+                resource1 = schools[schoolIndex].consumption;
+                targetUom = "kWh";
+                resUom = targetUom;
+                $(".compare0").hide();
+                $(".compare1").hide();
+                $(".compare2").hide();
+                $(".compare3").show();
+                break;
+        }
+        queries = [
+            {
+                "from": new Date().getTime() - 31 * 24 * 60 * 60 * 1000,
+                "granularity": "day",
+                "resourceUuid": resource1.uuid,
+                "resultLimit": 0,
+                "targetUom": targetUom,
+                "to": new Date().getTime()
+            }
+        ];
+
+        $.ajax({
+            method: "POST",
+            url: "https://api.sparkworks.net/v2/resource/query/timerange",
+            data: JSON.stringify({
+                "queries": queries
+            }),
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+                jkey = null;
+                for (var key in response.results) {
+                    jkey = key
+                }
+                total = 0;
+                count = 0;
+                limit1Count = 0;
+                limit2Count = 0;
+                for (var data in response.results[jkey].data) {
+                    if (response.results[jkey].data[data].reading > 0) {
+                        total += response.results[jkey].data[data].reading;
+                        count++;
+                        if (response.results[jkey].data[data].reading >= limit1) {
+                            limit1Count++;
+                        }
+                        if (response.results[jkey].data[data].reading <= limit2) {
+                            limit2Count++;
+                        }
+                    }
+                }
+                total = total / count;
+                avg = total;
+                total = total * 30;
+                if (selected_type === 0) {
+                    $(".consPerStudent" + ind).text(limit2Count);
+                    $(".consPerArea" + ind).text(limit1Count);
+                    $(".cons" + ind).text((avg).toFixed(0));
+                } else if (selected_type === 1) {
+                    $(".consPerStudent" + ind).text((total / schools[schoolIndex].students).toFixed(2));
+                    $(".cons" + ind).text((avg).toFixed(0));
+                    $(".consPerArea" + ind).text(limit1Count);
+                } else if (selected_type === 2) {
+                    $(".consPerStudent" + ind).text(limit2Count);
+                    $(".consPerArea" + ind).text(limit1Count);
+                    $(".cons" + ind).text((avg).toFixed(0));
+                } else if (selected_type === 3) {
+                    $(".cons" + ind).text((total).toFixed(0));
+                    $(".consPerArea" + ind).text((total / schools[schoolIndex].area).toFixed(2));
+                    $(".consPerStudent" + ind).text((total / schools[schoolIndex].students).toFixed(2));
+                }
+                $(".uomField").html(resUom);
+            }
+        });
+    }
+</script>
+</body>
+</html>
