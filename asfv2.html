@@ -24,9 +24,20 @@
             border-radius: 0;
             margin-bottom: 0;
         }
-        .panel-success > .panel-heading{
-            color: white;
-            background: #9cc900;
+        .panel-primary > .panel-heading{
+        }
+        .panel-primary > .panel-heading > .panel-title{
+            color: white !important;
+            font-weight: bold !important;
+        }
+
+        .panel-success > .panel-heading {
+            background: darkgreen;
+        }
+
+        .panel-success > .panel-heading > .panel-title {
+            color: white !important;
+            font-weight: bold !important;
         }
     </style>
 </head>
@@ -35,7 +46,12 @@
 <div class="container">
     <br/>
     <div class="tab-content clearfix">
-        <div class="tab-pane fade in  active" id="day" role="tabpanel" aria-labelledby="day-tab" style="">
+        <div class="tab-pane fade in  active" id="boot" role="tabpanel" aria-labelledby="boot-tab" style="">
+            <video width="100%" height="100%" autoplay onended="bootEnded()">
+                <source src="/boot.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="tab-pane fade in" id="day" role="tabpanel" aria-labelledby="day-tab" style="">
             <h3 class="schoolName1"></h3>
             <div class="col-md-12">
                 <canvas id="day_chart" width="800" height="600"></canvas>
@@ -66,10 +82,10 @@
             <div class="col-md-9">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
-                        <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
-                        <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
-                        <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                        <h3 class="panel-title compare0">Μέση θερμοκρασία μήνα</h3>
+                        <h3 class="panel-title compare1">Μέση ένταση θορύβου μήνα</h3>
+                        <h3 class="panel-title compare2">Μέση σχετική υγρασία μήνα</h3>
+                        <h3 class="panel-title compare3">Κατανάλωση Ενέργειας μήνα</h3>
                     </div>
                     <div class="panel-body text-center">
                         <span style="font-size: 4em" class="cons1"></span>
@@ -134,10 +150,10 @@
                 <div class="col-md-12">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare0">Μέση θερμοκρασία μήνα</h3>
+                            <h3 class="panel-title compare1">Μέση ένταση θορύβου μήνα</h3>
+                            <h3 class="panel-title compare2">Μέση σχετική υγρασία μήνα</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας μήνα</h3>
                         </div>
                         <div class="panel-body text-center">
                             <span style="font-size: 4em" class="cons1"></span>
@@ -199,10 +215,10 @@
                 <div class="col-md-12">
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            <h3 class="panel-title compare0">Μέση θερμοκρασία σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare1">Μέση ένταση θορύβου σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare2">Μέση σχετική υγρασία σε 30 ημέρες</h3>
-                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας σε 30 ημέρες</h3>
+                            <h3 class="panel-title compare0">Μέση θερμοκρασία μήνα</h3>
+                            <h3 class="panel-title compare1">Μέση ένταση θορύβου μήνα</h3>
+                            <h3 class="panel-title compare2">Μέση σχετική υγρασία μήνα</h3>
+                            <h3 class="panel-title compare3">Κατανάλωση Ενέργειας μήνα</h3>
                         </div>
                         <div class="panel-body text-center">
                             <span style="font-size: 4em" class="cons2"></span>
@@ -254,7 +270,7 @@
 <!-- Graphs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 <script>
-    keysBind = ['q', 'w', 'e', 'r', '1', '2', '3', '4', 's', 'a', 'z'];
+    keysBind = ['q', 'w', 'e', 'r', 's', 'd', 'f', 'g', '1', 'a', 'z'];
 
     schools = [
         {id: 155865, name: '46ο Δημοτικό Σχολείο Πατρών', students: 100, area: 200, path: 'ROOT.GAIA.GROUPS.155865'},
@@ -311,6 +327,10 @@
     schoolIndex2 = 1;
     selected_type = 0;
 
+    function bootEnded() {
+        $(".tab-pane").hide();
+        $("#day").show();
+    }
 
     function findGetParameter(parameterName) {
         var result = null,
@@ -345,13 +365,16 @@
                                 console.log(school);
                                 school.resources = resources;
                                 for (i = 0; i < resources.length; i++) {
+                                    if (resources[i].groupUuid!==e.uuid){
+                                        continue;
+                                    }
                                     if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Consumption")) {
                                         school.consumption = resources[i];
-                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Temperature")) {
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("/Temperature")) {
                                         school.temperature = resources[i];
-                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Humidity")) {
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("/Relative Humidity")) {
                                         school.humidity = resources[i];
-                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("Noise")) {
+                                    } else if (resources[i].systemName.startsWith("site-") && resources[i].systemName.endsWith("/Noise")) {
                                         school.noise = resources[i];
                                     }
                                 }
@@ -452,16 +475,16 @@
             case 'Ε':
             case 'ε':
                 $(".tab-pane").hide();
-                $("#ranking").show();
+                $("#compare").show();
+                updateCompareStats(1);
+                updateCompareStats(2);
                 break;
             case 'r':
             case 'R':
             case 'Ρ':
             case 'ρ':
-                $(".tab-pane").hide();
-                $("#compare").show();
-                updateCompareStats(1);
-                updateCompareStats(2);
+                // $(".tab-pane").hide();
+                // $("#ranking").show();
                 break;
             case 'a':
             case 'A':
@@ -487,16 +510,6 @@
                 updateGraphDay();
                 updateGraphWeek();
                 break;
-            case 's':
-            case 'S':
-            case 'Σ':
-            case 'σ':
-                schoolIndex2++;
-                if (schoolIndex2 >= schools.length) {
-                    schoolIndex2 = 0;
-                }
-                updateSchool2();
-                break;
             case 'x':
             case 'X':
             case 'Χ':
@@ -508,27 +521,53 @@
                 updateSchool2();
                 break;
             case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+                schoolIndex2 = parseInt(key) - 1;
+                if (schoolIndex2 >= schools.length) {
+                    schoolIndex2 = 0;
+                }
+                updateSchool2();
+                break;
+            case 's':
+            case 'S':
+            case 'Σ':
+            case 'σ':
                 selected_type = 0;
                 updateCompareStats(1);
                 updateCompareStats(2);
                 updateGraphDay();
                 updateGraphWeek();
                 break;
-            case '2':
+            case 'd':
+            case 'D':
+            case 'Δ':
+            case 'δ':
                 selected_type = 1;
                 updateCompareStats(1);
                 updateCompareStats(2);
                 updateGraphDay();
                 updateGraphWeek();
                 break;
-            case '3':
+            case 'f':
+            case 'F':
+            case 'φ':
+            case 'Φ':
                 selected_type = 2;
                 updateCompareStats(1);
                 updateCompareStats(2);
                 updateGraphDay();
                 updateGraphWeek();
                 break;
-            case '4':
+            case 'g':
+            case 'G':
+            case 'γ':
+            case 'Γ':
                 selected_type = 3;
                 updateCompareStats(1);
                 updateCompareStats(2);
@@ -665,19 +704,19 @@
         max = null;
         switch (selected_type) {
             case 0:
-                yTitle = "Temperature (C)";
+                yTitle = "Θερμοκρασία (C)";
                 max = 30;
                 break;
             case 1:
-                yTitle = "Noise (db)";
+                yTitle = "Επίπεδα θορύβου (db)";
                 max = 100;
                 break;
             case 2:
-                yTitle = "Relative Humidity (%RH)";
+                yTitle = "Σχετική Υγρασία (%RH)";
                 max = 100;
                 break;
             case 3:
-                yTitle = "Power Consumption (kWh)";
+                yTitle = "Κατανάλωση Ενέργειας (kWh)";
                 // max = (type === 'hour') ? 14 : 120;
                 break;
         }
@@ -690,7 +729,7 @@
         maxVal = 0;
         for (var data in response.results[jkey].data) {
             gData.push({
-                x: new Date(response.results[jkey].data[data].timestamp),
+                x: new Date(response.results[jkey].data[data].timestamp - (new Date().getTimezoneOffset() * 60 * 1000)),
                 y: response.results[jkey].data[data].reading
             });
             if (maxVal < response.results[jkey].data[data].reading) {
@@ -734,7 +773,7 @@
                             unit: type
                         },
                         scaleLabel: {
-                            display: true, fontSize: 20, labelString: 'Time'
+                            display: true, fontSize: 20, labelString: 'Ώρα'
                         }
                     }]
                 },
@@ -763,8 +802,8 @@
                 $(".compare1").hide();
                 $(".compare2").hide();
                 $(".compare3").hide();
-                limit1 = 20;
-                limit2 = 26;
+                limit1 = 26;
+                limit2 = 20;
                 break;
             case 1:
                 resource1 = schools[schoolIndex].noise;
@@ -782,8 +821,8 @@
                 $(".compare1").hide();
                 $(".compare2").show();
                 $(".compare3").hide();
-                limit1 = 40;
-                limit2 = 56;
+                limit1 = 56;
+                limit2 = 40;
                 break;
             case 3:
                 resource1 = schools[schoolIndex].consumption;
@@ -824,13 +863,16 @@
                 limit1Count = 0;
                 limit2Count = 0;
                 for (var data in response.results[jkey].data) {
-                    if (response.results[jkey].data[data].reading > 0) {
-                        total += response.results[jkey].data[data].reading;
+                    value = parseFloat(response.results[jkey].data[data].reading);
+                    if (value > 0) {
+                        total += value ;
                         count++;
-                        if (response.results[jkey].data[data].reading >= limit1) {
+                        if (value >= limit1) {
+                            console.log(resource1.uuid + " reading: " + value + ">=" + limit1);
                             limit1Count++;
                         }
-                        if (response.results[jkey].data[data].reading <= limit2) {
+                        if (value <= limit2) {
+                            console.log(resource1.uuid + " reading: " + value + "<=" + limit2);
                             limit2Count++;
                         }
                     }
